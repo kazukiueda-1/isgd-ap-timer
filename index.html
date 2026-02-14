@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="IS・GD / APタイマー">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>IS・GD / APタイマー</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/icon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- モード選択画面 -->
+  <div id="mode-select" class="screen active">
+    <h1 class="app-title">タイマー</h1>
+    <p class="app-subtitle">使用するタイマーを選択</p>
+    <div class="mode-buttons">
+      <button class="mode-btn" data-mode="isgd">
+        <span class="mode-name">IS・GD</span>
+        <span class="mode-label">タイマー</span>
+      </button>
+      <button class="mode-btn" data-mode="ap">
+        <span class="mode-name">AP</span>
+        <span class="mode-label">タイマー</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- タイマー画面 -->
+  <div id="timer-screen" class="screen">
+    <header class="timer-header">
+      <button id="back-btn" class="back-btn" aria-label="戻る">&#9664; 戻る</button>
+      <span id="mode-title" class="mode-title"></span>
+    </header>
+    <div id="timers-container" class="timers-container"></div>
+  </div>
+
+  <!-- タイマーテンプレート -->
+  <template id="timer-template">
+    <div class="timer-card">
+      <div class="timer-top-row">
+        <span class="timer-label"></span>
+        <div class="mode-toggle">
+          <button class="toggle-btn active" data-mode="down">カウントダウン</button>
+          <button class="toggle-btn" data-mode="up">カウントアップ</button>
+        </div>
+      </div>
+
+      <!-- 録画ボタン -->
+      <button class="rec-btn rec-stopped">
+        <span class="rec-dot"></span>
+        <span class="rec-text">録画停止済み</span>
+      </button>
+
+      <!-- 時間設定 (カウントダウン用) -->
+      <div class="time-setter">
+        <div class="picker-group">
+          <button class="picker-arrow up" data-unit="h" data-dir="up">&#9650;</button>
+          <span class="picker-val" data-unit="h">00</span>
+          <button class="picker-arrow down" data-unit="h" data-dir="down">&#9660;</button>
+          <span class="picker-unit">時</span>
+        </div>
+        <span class="picker-sep">:</span>
+        <div class="picker-group">
+          <button class="picker-arrow up" data-unit="m" data-dir="up">&#9650;</button>
+          <span class="picker-val" data-unit="m">00</span>
+          <button class="picker-arrow down" data-unit="m" data-dir="down">&#9660;</button>
+          <span class="picker-unit">分</span>
+        </div>
+        <span class="picker-sep">:</span>
+        <div class="picker-group">
+          <button class="picker-arrow up" data-unit="s" data-dir="up">&#9650;</button>
+          <span class="picker-val" data-unit="s">00</span>
+          <button class="picker-arrow down" data-unit="s" data-dir="down">&#9660;</button>
+          <span class="picker-unit">秒</span>
+        </div>
+      </div>
+
+      <!-- 時間表示 -->
+      <div class="time-display">00:00:00</div>
+
+      <!-- 操作ボタン -->
+      <div class="controls">
+        <button class="ctrl-btn start-btn">スタート</button>
+        <button class="ctrl-btn stop-btn" disabled>ストップ</button>
+        <button class="ctrl-btn reset-btn">リセット</button>
+      </div>
+    </div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

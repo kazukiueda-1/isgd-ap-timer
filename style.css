@@ -1,0 +1,406 @@
+/* === Reset & Base === */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #0a0a0a;
+  --card-bg: #1a1a1a;
+  --accent: #00e676;
+  --accent-dim: #00a854;
+  --danger: #ff5252;
+  --text: #f0f0f0;
+  --text-dim: #888;
+  --border: #333;
+  --safe-top: env(safe-area-inset-top);
+  --safe-bottom: env(safe-area-inset-bottom);
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* === Screens === */
+.screen {
+  display: none;
+  height: 100%;
+  padding-top: var(--safe-top);
+  padding-bottom: var(--safe-bottom);
+}
+
+.screen.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* === Mode Select === */
+#mode-select {
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+}
+
+.app-title {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 2px;
+}
+
+.app-subtitle {
+  font-size: 16px;
+  color: var(--text-dim);
+}
+
+.mode-buttons {
+  display: flex;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 140px;
+  height: 96px;
+  border: 2px solid var(--accent);
+  border-radius: 20px;
+  background: transparent;
+  color: var(--accent);
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mode-btn:active {
+  background: rgba(0, 230, 118, 0.15);
+  transform: scale(0.95);
+}
+
+.mode-name {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.mode-label {
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+/* === Timer Screen === */
+#timer-screen {
+  flex-direction: column;
+}
+
+.timer-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 8px 4px;
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+
+.mode-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* === Timers Container === */
+.timers-container {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* === Timer Card === */
+.timer-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 12px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.timer-card.alarming {
+  animation: alarm-flash 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes alarm-flash {
+  from { background: var(--card-bg); }
+  to { background: rgba(255, 82, 82, 0.3); }
+}
+
+/* === Top Row === */
+.timer-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timer-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.mode-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 11px;
+  padding: 6px 10px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  min-height: 32px;
+}
+
+.toggle-btn.active {
+  background: var(--accent);
+  color: #000;
+  font-weight: 600;
+}
+
+/* === Time Setter === */
+.time-setter {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.time-setter.hidden {
+  display: none;
+}
+
+.picker-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.picker-arrow {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 12px;
+  min-width: 44px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.picker-arrow:active {
+  color: var(--text);
+}
+
+.picker-val {
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  min-width: 40px;
+  text-align: center;
+}
+
+.picker-unit {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.picker-sep {
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-dim);
+  align-self: center;
+  margin-top: -18px;
+}
+
+/* === Time Display === */
+.time-display {
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  font-size: 48px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text);
+  letter-spacing: 2px;
+  padding: 8px 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* === Controls === */
+.controls {
+  display: flex;
+  gap: 8px;
+}
+
+.ctrl-btn {
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 48px;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.ctrl-btn:active {
+  transform: scale(0.97);
+}
+
+.ctrl-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+  transform: none;
+}
+
+.start-btn {
+  background: var(--accent);
+  color: #000;
+}
+
+.stop-btn {
+  background: var(--danger);
+  color: #fff;
+}
+
+.reset-btn {
+  background: #333;
+  color: var(--text);
+}
+
+/* === 録画ボタン === */
+.rec-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 0;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: border-color 0.2s, background 0.2s;
+  min-height: 44px;
+}
+
+.rec-btn:active {
+  transform: scale(0.98);
+}
+
+.rec-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.rec-btn.rec-stopped {
+  border-color: #555;
+  color: var(--text-dim);
+}
+
+.rec-btn.rec-stopped .rec-dot {
+  background: #555;
+}
+
+.rec-btn.rec-recording {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: rgba(255, 82, 82, 0.08);
+}
+
+.rec-btn.rec-recording .rec-dot {
+  background: var(--danger);
+  animation: rec-pulse 1s ease-in-out infinite;
+}
+
+@keyframes rec-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* === モード別サイズ調整 === */
+.timers-container[data-count="1"] .time-display {
+  font-size: 72px;
+}
+
+.timers-container[data-count="1"] .picker-val {
+  font-size: 32px;
+}
+
+.timers-container[data-count="2"] .time-display {
+  font-size: 40px;
+}
+
+.timers-container[data-count="2"] .picker-val {
+  font-size: 22px;
+}
+
+.timers-container[data-count="2"] .picker-arrow {
+  min-height: 30px;
+  padding: 2px 10px;
+  font-size: 12px;
+}
+
+.timers-container[data-count="2"] .ctrl-btn {
+  padding: 10px 0;
+  min-height: 42px;
+  font-size: 14px;
+}
