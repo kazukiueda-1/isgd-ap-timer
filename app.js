@@ -57,15 +57,20 @@ const alarm = new AlarmSound();
 
 // === Timer Class ===
 class Timer {
-  constructor(card, index) {
+  /**
+   * @param {HTMLElement} card
+   * @param {number} index
+   * @param {boolean} allowCountUp - true: カウントアップ/ダウン切替あり
+   */
+  constructor(card, index, allowCountUp) {
     this.card = card;
     this.index = index;
+    this.allowCountUp = allowCountUp;
     this.mode = 'down';
     this.running = false;
     this.intervalId = null;
     this.totalSeconds = 0;
     this.targetSeconds = 0;
-    this.recording = false;
 
     this.setH = 0;
     this.setM = 0;
@@ -78,54 +83,33 @@ class Timer {
 
   _bindElements() {
     this.display = this.card.querySelector('.time-display');
-    this.setter = this.card.querySelector('.time-setter');
     this.startBtn = this.card.querySelector('.start-btn');
     this.stopBtn = this.card.querySelector('.stop-btn');
     this.resetBtn = this.card.querySelector('.reset-btn');
     this.toggleBtns = this.card.querySelectorAll('.toggle-btn');
-    this.recBtn = this.card.querySelector('.rec-btn');
-    this.recText = this.card.querySelector('.rec-text');
-    this.pickerVals = {
-      h: this.card.querySelector('.picker-val[data-unit="h"]'),
-      m: this.card.querySelector('.picker-val[data-unit="m"]'),
-      s: this.card.querySelector('.picker-val[data-unit="s"]'),
-    };
+    this.pickerArrows = this.card.querySelectorAll('.picker-arrow');
   }
 
   _bindEvents() {
-    // Mode toggle
+    // Mode toggle (三段タイマー用)
     this.toggleBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         if (this.running) return;
         this.mode = btn.dataset.mode;
         this.toggleBtns.forEach(b => b.classList.toggle('active', b === btn));
-        this.setter.classList.toggle('hidden', this.mode === 'up');
+        this._updatePickerVisibility();
         this.reset();
       });
     });
 
     // Picker arrows
-    this.card.querySelectorAll('.picker-arrow').forEach(btn => {
+    this.pickerArrows.forEach(btn => {
       btn.addEventListener('click', () => {
         if (this.running) return;
         const unit = btn.dataset.unit;
         const dir = btn.dataset.dir === 'up' ? 1 : -1;
         this._adjustPicker(unit, dir);
       });
-    });
-
-    // Recording button
-    this.recBtn.addEventListener('click', () => {
-      this.recording = !this.recording;
-      if (this.recording) {
-        this.recBtn.classList.remove('rec-stopped');
-        this.recBtn.classList.add('rec-recording');
-        this.recText.textContent = '録画開始済み';
-      } else {
-        this.recBtn.classList.remove('rec-recording');
-        this.recBtn.classList.add('rec-stopped');
-        this.recText.textContent = '録画停止済み';
-      }
     });
 
     // Controls
@@ -135,11 +119,17 @@ class Timer {
 
     // Tap card to stop alarm
     this.card.addEventListener('click', (e) => {
-      if (this.card.classList.contains('alarming') &&
-          !e.target.closest('.ctrl-btn') &&
-          !e.target.closest('.rec-btn')) {
+      if (this.card.classList.contains('alarming') && !e.target.closest('.ctrl-btn')) {
         this.stopAlarm();
       }
+    });
+  }
+
+  _updatePickerVisibility() {
+    // カウントアップ時は矢印を非表示
+    const hidden = this.mode === 'up';
+    this.pickerArrows.forEach(btn => {
+      btn.classList.toggle('hidden', hidden);
     });
   }
 
@@ -147,7 +137,6 @@ class Timer {
     const max = unit === 'h' ? 23 : 59;
     const key = unit === 'h' ? 'setH' : unit === 'm' ? 'setM' : 'setS';
     this[key] = (this[key] + dir + max + 1) % (max + 1);
-    this.pickerVals[unit].textContent = String(this[key]).padStart(2, '0');
     this.targetSeconds = this.setH * 3600 + this.setM * 60 + this.setS;
     this.totalSeconds = this.targetSeconds;
     this._updateDisplay();
@@ -156,12 +145,16 @@ class Timer {
   start() {
     alarm.init();
     if (this.running) return;
+
+    // カウントダウンで0の場合はスタートしない
     if (this.mode === 'down' && this.totalSeconds <= 0) return;
 
     this.running = true;
     this.startBtn.disabled = true;
     this.stopBtn.disabled = false;
-    this.setter.classList.add('hidden');
+
+    // 動作中は矢印を非表示
+    this.pickerArrows.forEach(btn => btn.classList.add('hidden'));
 
     const startTime = Date.now();
     const startSeconds = this.totalSeconds;
@@ -189,6 +182,9 @@ class Timer {
     this.intervalId = null;
     this.startBtn.disabled = false;
     this.stopBtn.disabled = true;
+
+    // 停止したら矢印を戻す（カウントアップ中でなければ）
+    this._updatePickerVisibility();
   }
 
   reset() {
@@ -196,10 +192,10 @@ class Timer {
     this.stop();
     if (this.mode === 'down') {
       this.totalSeconds = this.targetSeconds;
-      this.setter.classList.remove('hidden');
     } else {
       this.totalSeconds = 0;
     }
+    this._updatePickerVisibility();
     this._updateDisplay();
   }
 
@@ -235,8 +231,9 @@ class Timer {
 
 // === Mode Config ===
 const MODES = {
-  isgd: { title: 'IS・GDタイマー', count: 1, labels: ['IS・GD'] },
-  ap:   { title: 'APタイマー',     count: 2, labels: ['タイマー 1', 'タイマー 2'] },
+  isgd:   { title: 'IS・GDタイマー', count: 1, template: 'countdown', showRec: true },
+  ap:     { title: 'APタイマー',     count: 2, template: 'countdown', showRec: true },
+  triple: { title: '三段タイマー',    count: 3, template: 'triple',    showRec: false },
 };
 
 // === App Controller ===
@@ -245,9 +242,26 @@ const timerScreen = document.getElementById('timer-screen');
 const timersContainer = document.getElementById('timers-container');
 const modeTitle = document.getElementById('mode-title');
 const backBtn = document.getElementById('back-btn');
-const template = document.getElementById('timer-template');
+const recArea = document.getElementById('rec-area');
+const recBtn = document.getElementById('rec-btn');
+const recText = document.querySelector('#rec-btn .rec-text');
 
 let timers = [];
+let recording = false;
+
+// 録画ボタン
+recBtn.addEventListener('click', () => {
+  recording = !recording;
+  if (recording) {
+    recBtn.classList.remove('rec-stopped');
+    recBtn.classList.add('rec-recording');
+    recText.textContent = '録画開始済み';
+  } else {
+    recBtn.classList.remove('rec-recording');
+    recBtn.classList.add('rec-stopped');
+    recText.textContent = '録画停止済み';
+  }
+});
 
 function showTimerScreen(modeKey) {
   const cfg = MODES[modeKey];
@@ -257,16 +271,33 @@ function showTimerScreen(modeKey) {
   timers = [];
   timersContainer.innerHTML = '';
   timersContainer.dataset.count = cfg.count;
-
   modeTitle.textContent = cfg.title;
+
+  // 録画ボタン表示/非表示
+  recArea.classList.toggle('hidden', !cfg.showRec);
+  // リセット
+  recording = false;
+  recBtn.classList.remove('rec-recording');
+  recBtn.classList.add('rec-stopped');
+  recText.textContent = '録画停止済み';
+
+  const templateId = cfg.template === 'triple' ? 'timer-triple-template' : 'timer-countdown-template';
+  const template = document.getElementById(templateId);
+  const tripleLabels = ['タイマー 1', 'タイマー 2', 'タイマー 3'];
 
   for (let i = 0; i < cfg.count; i++) {
     const clone = template.content.cloneNode(true);
     const card = clone.querySelector('.timer-card');
-    card.querySelector('.timer-label').textContent = cfg.count === 1 ? '' : cfg.labels[i];
+
+    // 三段タイマーのみラベル付き
+    if (cfg.template === 'triple') {
+      card.querySelector('.timer-label').textContent = tripleLabels[i];
+    }
+
     timersContainer.appendChild(clone);
     const insertedCard = timersContainer.lastElementChild;
-    timers.push(new Timer(insertedCard, i));
+    const allowCountUp = cfg.template === 'triple';
+    timers.push(new Timer(insertedCard, i, allowCountUp));
   }
 
   modeSelect.classList.remove('active');

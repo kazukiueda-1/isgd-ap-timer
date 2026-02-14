@@ -9,7 +9,6 @@
   --bg: #0a0a0a;
   --card-bg: #1a1a1a;
   --accent: #00e676;
-  --accent-dim: #00a854;
   --danger: #ff5252;
   --text: #f0f0f0;
   --text-dim: #888;
@@ -49,39 +48,28 @@ body {
 #mode-select {
   justify-content: center;
   align-items: center;
-  gap: 24px;
   padding: 24px;
-}
-
-.app-title {
-  font-size: 36px;
-  font-weight: 700;
-  color: var(--accent);
-  letter-spacing: 2px;
-}
-
-.app-subtitle {
-  font-size: 16px;
-  color: var(--text-dim);
 }
 
 .mode-buttons {
   display: flex;
+  flex-direction: column;
   gap: 16px;
-  margin-top: 24px;
+  width: 100%;
+  max-width: 280px;
 }
 
 .mode-btn {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 140px;
-  height: 96px;
+  height: 72px;
   border: 2px solid var(--accent);
-  border-radius: 20px;
+  border-radius: 16px;
   background: transparent;
   color: var(--accent);
+  font-size: 20px;
+  font-weight: 700;
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
   -webkit-tap-highlight-color: transparent;
@@ -89,18 +77,7 @@ body {
 
 .mode-btn:active {
   background: rgba(0, 230, 118, 0.15);
-  transform: scale(0.95);
-}
-
-.mode-name {
-  font-size: 28px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.mode-label {
-  font-size: 14px;
-  margin-top: 4px;
+  transform: scale(0.97);
 }
 
 /* === Timer Screen === */
@@ -135,194 +112,16 @@ body {
   font-weight: 600;
 }
 
-/* === Timers Container === */
-.timers-container {
-  flex: 1;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 8px 12px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+/* === 録画エリア === */
+.rec-area {
+  padding: 8px 12px 0;
+  flex-shrink: 0;
 }
 
-/* === Timer Card === */
-.timer-card {
-  background: var(--card-bg);
-  border-radius: 16px;
-  padding: 12px 16px;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-height: 0;
-}
-
-.timer-card.alarming {
-  animation: alarm-flash 0.5s ease-in-out infinite alternate;
-}
-
-@keyframes alarm-flash {
-  from { background: var(--card-bg); }
-  to { background: rgba(255, 82, 82, 0.3); }
-}
-
-/* === Top Row === */
-.timer-top-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.timer-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--accent);
-}
-
-.mode-toggle {
-  display: flex;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.toggle-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-dim);
-  font-size: 11px;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: background 0.2s, color 0.2s;
-  min-height: 32px;
-}
-
-.toggle-btn.active {
-  background: var(--accent);
-  color: #000;
-  font-weight: 600;
-}
-
-/* === Time Setter === */
-.time-setter {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
-}
-
-.time-setter.hidden {
+.rec-area.hidden {
   display: none;
 }
 
-.picker-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.picker-arrow {
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: 14px;
-  cursor: pointer;
-  padding: 4px 12px;
-  min-width: 44px;
-  min-height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.picker-arrow:active {
-  color: var(--text);
-}
-
-.picker-val {
-  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text);
-  min-width: 40px;
-  text-align: center;
-}
-
-.picker-unit {
-  font-size: 10px;
-  color: var(--text-dim);
-}
-
-.picker-sep {
-  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-dim);
-  align-self: center;
-  margin-top: -18px;
-}
-
-/* === Time Display === */
-.time-display {
-  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
-  font-size: 48px;
-  font-weight: 700;
-  text-align: center;
-  color: var(--text);
-  letter-spacing: 2px;
-  padding: 8px 0;
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* === Controls === */
-.controls {
-  display: flex;
-  gap: 8px;
-}
-
-.ctrl-btn {
-  flex: 1;
-  padding: 12px 0;
-  border: none;
-  border-radius: 12px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  min-height: 48px;
-  transition: opacity 0.2s, transform 0.1s;
-}
-
-.ctrl-btn:active {
-  transform: scale(0.97);
-}
-
-.ctrl-btn:disabled {
-  opacity: 0.3;
-  cursor: default;
-  transform: none;
-}
-
-.start-btn {
-  background: var(--accent);
-  color: #000;
-}
-
-.stop-btn {
-  background: var(--danger);
-  color: #fff;
-}
-
-.reset-btn {
-  background: #333;
-  color: var(--text);
-}
-
-/* === 録画ボタン === */
 .rec-btn {
   display: flex;
   align-items: center;
@@ -376,31 +175,207 @@ body {
   50% { opacity: 0.3; }
 }
 
+/* === Timers Container === */
+.timers-container {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* === Timer Card === */
+.timer-card {
+  background: var(--card-bg);
+  border-radius: 16px;
+  padding: 12px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 0;
+}
+
+.timer-card.alarming {
+  animation: alarm-flash 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes alarm-flash {
+  from { background: var(--card-bg); }
+  to { background: rgba(255, 82, 82, 0.3); }
+}
+
+/* === Top Row (三段タイマー用) === */
+.timer-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timer-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.mode-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.toggle-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 12px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  min-height: 32px;
+}
+
+.toggle-btn.active {
+  background: var(--accent);
+  color: #000;
+  font-weight: 600;
+}
+
+/* === 一体型表示 (時間設定 + カウント) === */
+.unified-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+  justify-content: center;
+}
+
+.picker-row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.picker-arrow {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 6px 0;
+  min-width: 60px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  max-width: 80px;
+}
+
+.picker-arrow:active {
+  color: var(--text);
+}
+
+.picker-arrow.hidden {
+  visibility: hidden;
+}
+
+/* === Time Display === */
+.time-display {
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  font-size: 48px;
+  font-weight: 700;
+  text-align: center;
+  color: var(--text);
+  letter-spacing: 2px;
+  padding: 4px 0;
+}
+
+/* === Controls === */
+.controls {
+  display: flex;
+  gap: 8px;
+}
+
+.ctrl-btn {
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  min-height: 48px;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+.ctrl-btn:active {
+  transform: scale(0.97);
+}
+
+.ctrl-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+  transform: none;
+}
+
+.start-btn {
+  background: var(--accent);
+  color: #000;
+}
+
+.stop-btn {
+  background: var(--danger);
+  color: #fff;
+}
+
+.reset-btn {
+  background: #333;
+  color: var(--text);
+}
+
 /* === モード別サイズ調整 === */
+
+/* IS・GD: 1個 → 大きく */
 .timers-container[data-count="1"] .time-display {
   font-size: 72px;
 }
 
-.timers-container[data-count="1"] .picker-val {
-  font-size: 32px;
-}
-
+/* AP: 2個 */
 .timers-container[data-count="2"] .time-display {
-  font-size: 40px;
-}
-
-.timers-container[data-count="2"] .picker-val {
-  font-size: 22px;
-}
-
-.timers-container[data-count="2"] .picker-arrow {
-  min-height: 30px;
-  padding: 2px 10px;
-  font-size: 12px;
+  font-size: 44px;
 }
 
 .timers-container[data-count="2"] .ctrl-btn {
   padding: 10px 0;
   min-height: 42px;
   font-size: 14px;
+}
+
+/* 三段: 3個 → コンパクト */
+.timers-container[data-count="3"] .time-display {
+  font-size: 32px;
+  padding: 2px 0;
+}
+
+.timers-container[data-count="3"] .timer-card {
+  padding: 8px 12px;
+  gap: 4px;
+}
+
+.timers-container[data-count="3"] .picker-arrow {
+  min-height: 28px;
+  padding: 2px 0;
+  font-size: 12px;
+}
+
+.timers-container[data-count="3"] .ctrl-btn {
+  padding: 8px 0;
+  min-height: 38px;
+  font-size: 13px;
+  border-radius: 10px;
 }

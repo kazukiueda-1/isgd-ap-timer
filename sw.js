@@ -1,4 +1,4 @@
-const CACHE_NAME = 'three-timer-v2';
+const CACHE_NAME = 'three-timer-v3';
 const ASSETS = [
   './',
   './index.html',

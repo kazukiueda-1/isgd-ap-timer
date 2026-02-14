@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="IS・GD / APタイマー">
+  <meta name="apple-mobile-web-app-title" content="タイマー">
   <meta name="theme-color" content="#0a0a0a">
-  <title>IS・GD / APタイマー</title>
+  <title>タイマー</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="icons/icon.svg">
   <link rel="stylesheet" href="style.css">
@@ -15,17 +15,10 @@
 <body>
   <!-- モード選択画面 -->
   <div id="mode-select" class="screen active">
-    <h1 class="app-title">タイマー</h1>
-    <p class="app-subtitle">使用するタイマーを選択</p>
     <div class="mode-buttons">
-      <button class="mode-btn" data-mode="isgd">
-        <span class="mode-name">IS・GD</span>
-        <span class="mode-label">タイマー</span>
-      </button>
-      <button class="mode-btn" data-mode="ap">
-        <span class="mode-name">AP</span>
-        <span class="mode-label">タイマー</span>
-      </button>
+      <button class="mode-btn" data-mode="isgd">IS・GDタイマー</button>
+      <button class="mode-btn" data-mode="ap">APタイマー</button>
+      <button class="mode-btn" data-mode="triple">三段タイマー</button>
     </div>
   </div>
 
@@ -35,52 +28,70 @@
       <button id="back-btn" class="back-btn" aria-label="戻る">&#9664; 戻る</button>
       <span id="mode-title" class="mode-title"></span>
     </header>
+
+    <!-- 録画ボタン（IS・GD / AP用、画面上部に1つだけ） -->
+    <div id="rec-area" class="rec-area hidden">
+      <button id="rec-btn" class="rec-btn rec-stopped">
+        <span class="rec-dot"></span>
+        <span class="rec-text">録画停止済み</span>
+      </button>
+    </div>
+
     <div id="timers-container" class="timers-container"></div>
   </div>
 
-  <!-- タイマーテンプレート -->
-  <template id="timer-template">
+  <!-- IS・GD / APタイマー用テンプレート（カウントダウン専用・一体型） -->
+  <template id="timer-countdown-template">
+    <div class="timer-card">
+      <!-- 時間設定 + カウント表示 一体型 -->
+      <div class="unified-display">
+        <div class="picker-row">
+          <button class="picker-arrow" data-unit="h" data-dir="up">&#9650;</button>
+          <button class="picker-arrow" data-unit="m" data-dir="up">&#9650;</button>
+          <button class="picker-arrow" data-unit="s" data-dir="up">&#9650;</button>
+        </div>
+        <div class="time-display">00:00:00</div>
+        <div class="picker-row">
+          <button class="picker-arrow" data-unit="h" data-dir="down">&#9660;</button>
+          <button class="picker-arrow" data-unit="m" data-dir="down">&#9660;</button>
+          <button class="picker-arrow" data-unit="s" data-dir="down">&#9660;</button>
+        </div>
+      </div>
+
+      <!-- 操作ボタン -->
+      <div class="controls">
+        <button class="ctrl-btn start-btn">スタート</button>
+        <button class="ctrl-btn stop-btn" disabled>ストップ</button>
+        <button class="ctrl-btn reset-btn">リセット</button>
+      </div>
+    </div>
+  </template>
+
+  <!-- 三段タイマー用テンプレート（カウントアップ/ダウン切替あり・一体型） -->
+  <template id="timer-triple-template">
     <div class="timer-card">
       <div class="timer-top-row">
         <span class="timer-label"></span>
         <div class="mode-toggle">
-          <button class="toggle-btn active" data-mode="down">カウントダウン</button>
-          <button class="toggle-btn" data-mode="up">カウントアップ</button>
+          <button class="toggle-btn active" data-mode="down">ダウン</button>
+          <button class="toggle-btn" data-mode="up">アップ</button>
         </div>
       </div>
 
-      <!-- 録画ボタン -->
-      <button class="rec-btn rec-stopped">
-        <span class="rec-dot"></span>
-        <span class="rec-text">録画停止済み</span>
-      </button>
-
-      <!-- 時間設定 (カウントダウン用) -->
-      <div class="time-setter">
-        <div class="picker-group">
-          <button class="picker-arrow up" data-unit="h" data-dir="up">&#9650;</button>
-          <span class="picker-val" data-unit="h">00</span>
-          <button class="picker-arrow down" data-unit="h" data-dir="down">&#9660;</button>
-          <span class="picker-unit">時</span>
+      <!-- 時間設定 + カウント表示 一体型 -->
+      <div class="unified-display">
+        <div class="picker-row">
+          <button class="picker-arrow" data-unit="h" data-dir="up">&#9650;</button>
+          <button class="picker-arrow" data-unit="m" data-dir="up">&#9650;</button>
+          <button class="picker-arrow" data-unit="s" data-dir="up">&#9650;</button>
         </div>
-        <span class="picker-sep">:</span>
-        <div class="picker-group">
-          <button class="picker-arrow up" data-unit="m" data-dir="up">&#9650;</button>
-          <span class="picker-val" data-unit="m">00</span>
-          <button class="picker-arrow down" data-unit="m" data-dir="down">&#9660;</button>
-          <span class="picker-unit">分</span>
-        </div>
-        <span class="picker-sep">:</span>
-        <div class="picker-group">
-          <button class="picker-arrow up" data-unit="s" data-dir="up">&#9650;</button>
-          <span class="picker-val" data-unit="s">00</span>
-          <button class="picker-arrow down" data-unit="s" data-dir="down">&#9660;</button>
-          <span class="picker-unit">秒</span>
+        <div class="time-display">00:00:00</div>
+        <div class="picker-row">
+          <button class="picker-arrow" data-unit="h" data-dir="down">&#9660;</button>
+          <button class="picker-arrow" data-unit="m" data-dir="down">&#9660;</button>
+          <button class="picker-arrow" data-unit="s" data-dir="down">&#9660;</button>
         </div>
       </div>
-
-      <!-- 時間表示 -->
-      <div class="time-display">00:00:00</div>
 
       <!-- 操作ボタン -->
       <div class="controls">
