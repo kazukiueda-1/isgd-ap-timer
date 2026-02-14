@@ -1,4 +1,4 @@
-const CACHE_NAME = 'three-timer-v4';
+const CACHE_NAME = 'three-timer-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -26,9 +26,19 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch: cache-first strategy
+// Fetch: network-first strategy (always try fresh content first)
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    fetch(event.request)
+      .then((response) => {
+        // Save fresh copy to cache
+        const clone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+        return response;
+      })
+      .catch(() => {
+        // Offline: fall back to cache
+        return caches.match(event.request);
+      })
   );
 });
