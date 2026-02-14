@@ -15,6 +15,7 @@
   --border: #333;
   --safe-top: env(safe-area-inset-top);
   --safe-bottom: env(safe-area-inset-bottom);
+  --item-h: 40px;
 }
 
 html, body {
@@ -139,9 +140,7 @@ body {
   min-height: 44px;
 }
 
-.rec-btn:active {
-  transform: scale(0.98);
-}
+.rec-btn:active { transform: scale(0.98); }
 
 .rec-dot {
   width: 12px;
@@ -150,25 +149,10 @@ body {
   flex-shrink: 0;
 }
 
-.rec-btn.rec-stopped {
-  border-color: #555;
-  color: var(--text-dim);
-}
-
-.rec-btn.rec-stopped .rec-dot {
-  background: #555;
-}
-
-.rec-btn.rec-recording {
-  border-color: var(--danger);
-  color: var(--danger);
-  background: rgba(255, 82, 82, 0.08);
-}
-
-.rec-btn.rec-recording .rec-dot {
-  background: var(--danger);
-  animation: rec-pulse 1s ease-in-out infinite;
-}
+.rec-btn.rec-stopped { border-color: #555; color: var(--text-dim); }
+.rec-btn.rec-stopped .rec-dot { background: #555; }
+.rec-btn.rec-recording { border-color: var(--danger); color: var(--danger); background: rgba(255,82,82,0.08); }
+.rec-btn.rec-recording .rec-dot { background: var(--danger); animation: rec-pulse 1s ease-in-out infinite; }
 
 @keyframes rec-pulse {
   0%, 100% { opacity: 1; }
@@ -212,6 +196,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .timer-label {
@@ -244,47 +229,110 @@ body {
   font-weight: 600;
 }
 
-/* === 一体型表示 (時間設定 + カウント) === */
-.unified-display {
+/* ======================================
+   ドラムロール式ピッカー
+   ====================================== */
+
+.picker-area {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-height: 0;
+}
+
+.picker-area.hidden {
+  display: none;
+}
+
+.drum-picker {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.drum-viewport {
+  width: 56px;
+  height: calc(var(--item-h) * 5);
+  overflow: hidden;
+  position: relative;
+  /* 上下フェードアウト */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0,0,0,0.3) 20%,
+    black 35%,
+    black 65%,
+    rgba(0,0,0,0.3) 80%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0,0,0,0.3) 20%,
+    black 35%,
+    black 65%,
+    rgba(0,0,0,0.3) 80%,
+    transparent 100%
+  );
+}
+
+.drum-track {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 0;
-  flex: 1;
-  justify-content: center;
+  will-change: transform;
+  transition: transform 0.15s ease-out;
 }
 
-.picker-row {
-  display: flex;
-  justify-content: center;
-  width: 100%;
+.drum-track.snapping {
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.3, 1);
 }
 
-.picker-arrow {
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: 16px;
-  cursor: pointer;
-  padding: 6px 0;
-  min-width: 60px;
-  min-height: 36px;
+.drum-track.dragging {
+  transition: none;
+}
+
+.drum-item {
+  height: var(--item-h);
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1;
-  max-width: 80px;
+  font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text-dim);
+  flex-shrink: 0;
 }
 
-.picker-arrow:active {
+.drum-item.selected {
   color: var(--text);
+  font-size: 26px;
+  font-weight: 700;
 }
 
-.picker-arrow.hidden {
-  visibility: hidden;
+.drum-unit {
+  font-size: 13px;
+  color: var(--text-dim);
+  min-width: 16px;
 }
 
-/* === Time Display === */
+/* 選択行ハイライト帯 */
+.drum-highlight {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: var(--item-h);
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 1px solid var(--accent);
+  border-bottom: 1px solid var(--accent);
+  pointer-events: none;
+  border-radius: 4px;
+}
+
+/* === Time Display (カウント中) === */
 .time-display {
   font-family: 'SF Mono', 'Menlo', 'Courier New', monospace;
   font-size: 48px;
@@ -293,12 +341,21 @@ body {
   color: var(--text);
   letter-spacing: 2px;
   padding: 4px 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.time-display.hidden {
+  display: none;
 }
 
 /* === Controls === */
 .controls {
   display: flex;
   gap: 8px;
+  flex-shrink: 0;
 }
 
 .ctrl-btn {
@@ -313,36 +370,30 @@ body {
   transition: opacity 0.2s, transform 0.1s;
 }
 
-.ctrl-btn:active {
-  transform: scale(0.97);
-}
+.ctrl-btn:active { transform: scale(0.97); }
+.ctrl-btn:disabled { opacity: 0.3; cursor: default; transform: none; }
 
-.ctrl-btn:disabled {
-  opacity: 0.3;
-  cursor: default;
-  transform: none;
-}
-
-.start-btn {
-  background: var(--accent);
-  color: #000;
-}
-
-.stop-btn {
-  background: var(--danger);
-  color: #fff;
-}
-
-.reset-btn {
-  background: #333;
-  color: var(--text);
-}
+.start-btn { background: var(--accent); color: #000; }
+.stop-btn  { background: var(--danger); color: #fff; }
+.reset-btn { background: #333; color: var(--text); }
 
 /* === モード別サイズ調整 === */
 
 /* IS・GD: 1個 → 大きく */
 .timers-container[data-count="1"] .time-display {
   font-size: 72px;
+}
+
+.timers-container[data-count="1"] .drum-item {
+  font-size: 28px;
+}
+
+.timers-container[data-count="1"] .drum-item.selected {
+  font-size: 34px;
+}
+
+.timers-container[data-count="1"] .drum-viewport {
+  width: 70px;
 }
 
 /* AP: 2個 */
@@ -367,10 +418,17 @@ body {
   gap: 4px;
 }
 
-.timers-container[data-count="3"] .picker-arrow {
-  min-height: 28px;
-  padding: 2px 0;
-  font-size: 12px;
+.timers-container[data-count="3"] .drum-viewport {
+  width: 44px;
+  height: calc(var(--item-h) * 3);
+}
+
+.timers-container[data-count="3"] .drum-item {
+  font-size: 18px;
+}
+
+.timers-container[data-count="3"] .drum-item.selected {
+  font-size: 20px;
 }
 
 .timers-container[data-count="3"] .ctrl-btn {

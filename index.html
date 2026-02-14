@@ -29,7 +29,7 @@
       <span id="mode-title" class="mode-title"></span>
     </header>
 
-    <!-- 録画ボタン（IS・GD / AP用、画面上部に1つだけ） -->
+    <!-- 録画ボタン（IS・GD / AP用） -->
     <div id="rec-area" class="rec-area hidden">
       <button id="rec-btn" class="rec-btn rec-stopped">
         <span class="rec-dot"></span>
@@ -40,25 +40,35 @@
     <div id="timers-container" class="timers-container"></div>
   </div>
 
-  <!-- IS・GD / APタイマー用テンプレート（カウントダウン専用・一体型） -->
+  <!-- IS・GD / APタイマー用テンプレート（カウントダウン専用） -->
   <template id="timer-countdown-template">
     <div class="timer-card">
-      <!-- 時間設定 + カウント表示 一体型 -->
-      <div class="unified-display">
-        <div class="picker-row">
-          <button class="picker-arrow" data-unit="h" data-dir="up">&#9650;</button>
-          <button class="picker-arrow" data-unit="m" data-dir="up">&#9650;</button>
-          <button class="picker-arrow" data-unit="s" data-dir="up">&#9650;</button>
+      <!-- ピッカーエリア（設定時に表示） -->
+      <div class="picker-area">
+        <div class="drum-picker" data-unit="h">
+          <div class="drum-viewport">
+            <div class="drum-track"></div>
+          </div>
+          <span class="drum-unit">時</span>
         </div>
-        <div class="time-display">00:00:00</div>
-        <div class="picker-row">
-          <button class="picker-arrow" data-unit="h" data-dir="down">&#9660;</button>
-          <button class="picker-arrow" data-unit="m" data-dir="down">&#9660;</button>
-          <button class="picker-arrow" data-unit="s" data-dir="down">&#9660;</button>
+        <div class="drum-picker" data-unit="m">
+          <div class="drum-viewport">
+            <div class="drum-track"></div>
+          </div>
+          <span class="drum-unit">分</span>
         </div>
+        <div class="drum-picker" data-unit="s">
+          <div class="drum-viewport">
+            <div class="drum-track"></div>
+          </div>
+          <span class="drum-unit">秒</span>
+        </div>
+        <div class="drum-highlight"></div>
       </div>
 
-      <!-- 操作ボタン -->
+      <!-- カウント表示（動作中に表示） -->
+      <div class="time-display hidden">00:00:00</div>
+
       <div class="controls">
         <button class="ctrl-btn start-btn">スタート</button>
         <button class="ctrl-btn stop-btn" disabled>ストップ</button>
@@ -67,7 +77,7 @@
     </div>
   </template>
 
-  <!-- 三段タイマー用テンプレート（カウントアップ/ダウン切替あり・一体型） -->
+  <!-- 三段タイマー用テンプレート（カウントアップ/ダウン切替あり） -->
   <template id="timer-triple-template">
     <div class="timer-card">
       <div class="timer-top-row">
@@ -78,22 +88,32 @@
         </div>
       </div>
 
-      <!-- 時間設定 + カウント表示 一体型 -->
-      <div class="unified-display">
-        <div class="picker-row">
-          <button class="picker-arrow" data-unit="h" data-dir="up">&#9650;</button>
-          <button class="picker-arrow" data-unit="m" data-dir="up">&#9650;</button>
-          <button class="picker-arrow" data-unit="s" data-dir="up">&#9650;</button>
+      <!-- ピッカーエリア -->
+      <div class="picker-area">
+        <div class="drum-picker" data-unit="h">
+          <div class="drum-viewport">
+            <div class="drum-track"></div>
+          </div>
+          <span class="drum-unit">時</span>
         </div>
-        <div class="time-display">00:00:00</div>
-        <div class="picker-row">
-          <button class="picker-arrow" data-unit="h" data-dir="down">&#9660;</button>
-          <button class="picker-arrow" data-unit="m" data-dir="down">&#9660;</button>
-          <button class="picker-arrow" data-unit="s" data-dir="down">&#9660;</button>
+        <div class="drum-picker" data-unit="m">
+          <div class="drum-viewport">
+            <div class="drum-track"></div>
+          </div>
+          <span class="drum-unit">分</span>
         </div>
+        <div class="drum-picker" data-unit="s">
+          <div class="drum-viewport">
+            <div class="drum-track"></div>
+          </div>
+          <span class="drum-unit">秒</span>
+        </div>
+        <div class="drum-highlight"></div>
       </div>
 
-      <!-- 操作ボタン -->
+      <!-- カウント表示 -->
+      <div class="time-display hidden">00:00:00</div>
+
       <div class="controls">
         <button class="ctrl-btn start-btn">スタート</button>
         <button class="ctrl-btn stop-btn" disabled>ストップ</button>
